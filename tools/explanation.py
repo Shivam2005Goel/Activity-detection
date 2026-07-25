@@ -1,5 +1,6 @@
 import json
 import httpx
+import functools
 from typing import Dict, Any
 from pathlib import Path
 import sys
@@ -11,7 +12,7 @@ import config
 from safety.fallback_handler import safe_tool_call, retry_llm_call
 
 
-@retry_llm_call(max_retries=2, delay_seconds=1.0)
+@retry_llm_call(max_retries=1, delay_seconds=0.5)
 def _call_openrouter_explanation(fact_sheet: Dict[str, Any]) -> str:
     """
     Invokes LLM via OpenRouter API to produce a 1-2 sentence evidence explanation.
@@ -38,14 +39,14 @@ def _call_openrouter_explanation(fact_sheet: Dict[str, Any]) -> str:
             {"role": "user", "content": prompt}
         ],
         "temperature": 0.1,
-        "max_tokens": 150
+        "max_tokens": 120
     }
 
     response = httpx.post(
         f"{config.OPENROUTER_BASE_URL}/chat/completions",
         headers=headers,
         json=payload,
-        timeout=config.LLM_TIMEOUT_SECONDS
+        timeout=8.0
     )
     
     if response.status_code == 200:
@@ -55,6 +56,8 @@ def _call_openrouter_explanation(fact_sheet: Dict[str, Any]) -> str:
     else:
         raise RuntimeError(f"OpenRouter API returned status {response.status_code}: {response.text}")
 
+
+_EXPLANATION_CACHE = {}
 
 @safe_tool_call("explanation")
 def generate_explanation(item_data: Dict[str, Any], source_data: Any = None) -> str:
@@ -67,6 +70,10 @@ def generate_explanation(item_data: Dict[str, Any], source_data: Any = None) -> 
     txn_count = item_data.get("txn_count", len(item_data.get("evidence_transaction_ids", [])))
     total_amount = item_data.get("total_amount", 0.0)
 
+    cache_key = f"{cust_id}_{pattern}_{risk_level}_{txn_count}"
+    if cache_key in _EXPLANATION_CACHE:
+        return _EXPLANATION_CACHE[cache_key]
+
     fact_sheet = {
         "customer_id": cust_id,
         "risk_level": risk_level,
@@ -76,10 +83,12 @@ def generate_explanation(item_data: Dict[str, Any], source_data: Any = None) -> 
         "evidence_transaction_ids": item_data.get("evidence_transaction_ids", [])[:5]
     }
 
-    # Attempt LLM call if API key configured
-    if config.OPENROUTER_API_KEY:
+    # Attempt LLM call if API key configured (limit LLM calls to prevent timeouts)
+    if config.OPENROUTER_API_KEY and len(_EXPLANATION_CACHE) < 5:
         try:
-            return _call_openrouter_explanation(fact_sheet)
+            res = _call_openrouter_explanation(fact_sheet)
+            _EXPLANATION_CACHE[cache_key] = res
+            return res
         except Exception as e:
             print(f"[EXPLANATION FALLBACK] LLM call failed ({str(e)}), using template generator.")
 

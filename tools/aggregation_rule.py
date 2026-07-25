@@ -26,7 +26,7 @@ def run_aggregation(df: pd.DataFrame, filters: Optional[Filters] = None) -> pd.D
         evidence_transaction_ids=("transaction_id", lambda x: list(x))
     ).reset_index()
 
-    min_count = filters.min_transaction_count if (filters and filters.min_transaction_count is not None) else 10
+    min_count = filters.min_transaction_count if (filters and filters.min_transaction_count is not None) else 1
 
     # Apply min count filter
     filtered_agg = agg_df[agg_df["transaction_count"] >= min_count].copy()

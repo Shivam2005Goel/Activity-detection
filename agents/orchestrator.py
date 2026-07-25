@@ -9,6 +9,7 @@ sys.path.insert(0, str(BASE_DIR))
 import config
 from schemas import AgentResponse, ExecutionSummary, FlaggedItem, Intent, Filters
 from agents.query_understanding import parse_intent
+from agents.capability_validator import validate_capability
 from agents.planner import build_plan
 from agents.verifier import verify
 from tools.tool_registry import TOOL_REGISTRY
@@ -27,7 +28,23 @@ def run_agent(user_query: str) -> AgentResponse:
     # Step 1: Parse Query Intent
     intent: Intent = parse_intent(user_query)
 
-    # Step 2: Build Dynamic Execution Plan
+    # Step 2: Capability Validator
+    is_supported, reason = validate_capability(intent, user_query)
+    
+    if not is_supported:
+        log_event("UNSUPPORTED_QUERY", {"query": user_query, "reason": reason})
+        return AgentResponse(
+            query=user_query,
+            detected_intent=intent,
+            results=[],
+            execution_summary=ExecutionSummary(
+                agents_used=["Query Understanding Agent", "Capability Validator Agent"],
+                verification_status="Failed"
+            ),
+            error=reason
+        )
+
+    # Step 3: Build Dynamic Execution Plan
     planned_tools, skipped_tools = build_plan(intent)
 
     # Enforce MAX_PLANNER_STEPS safety threshold
@@ -251,12 +268,17 @@ def run_agent(user_query: str) -> AgentResponse:
         bias_warning=bias_warning
     )
 
+    extracted_data = None
+    if state["df"] is not None and not state["df"].empty:
+        extracted_data = state["df"].head(100).to_dict("records")
+
     draft_response = AgentResponse(
         query=user_query,
         detected_intent=intent,
         results=state["flagged_items"],
         execution_summary=summary,
-        charts=state["charts"]
+        charts=state["charts"],
+        extracted_data=extracted_data
     )
 
     # Step 6: Verifier Agent Pass

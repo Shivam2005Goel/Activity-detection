@@ -49,8 +49,8 @@ def load_filtered_data(filters: Optional[Filters] = None, csv_path: Optional[str
             params.append(filters.country)
             
         if filters.transaction_type:
-            where_clauses.append("LOWER(transaction_type) = LOWER(?)")
-            params.append(filters.transaction_type)
+            where_clauses.append("LOWER(transaction_type) LIKE LOWER(?)")
+            params.append(f"%{filters.transaction_type}%")
             
         if filters.customer_segment:
             where_clauses.append("LOWER(customer_segment) = LOWER(?)")

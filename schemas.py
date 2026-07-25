@@ -14,7 +14,7 @@ class Filters(BaseModel):
 
 
 class Intent(BaseModel):
-    intent_type: Literal["pattern_search", "aggregation_query", "entity_lookup", "broad_exploration"]
+    intent_type: Literal["pattern_search", "aggregation_query", "entity_lookup", "broad_exploration", "out_of_domain"]
     target_pattern: Literal["structuring", "smurfing", "layering", "rapid_cashout", "none"] = "none"
     filters: Filters = Field(default_factory=Filters)
     entity_id: Optional[str] = None
@@ -51,4 +51,5 @@ class AgentResponse(BaseModel):
     results: List[FlaggedItem] = Field(default_factory=list)
     execution_summary: ExecutionSummary
     charts: List[str] = Field(default_factory=list)      # file paths or base64 references
+    extracted_data: Optional[List[Dict[str, Any]]] = None
     error: Optional[str] = None

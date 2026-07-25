@@ -36,7 +36,7 @@ MAX_PLANNER_STEPS = 10
 # LLM & OpenRouter API Configuration
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", os.getenv("OPENAI_API_KEY", os.getenv("ANTHROPIC_API_KEY", "")))
 OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
-LLM_MODEL = os.getenv("LLM_MODEL", "anthropic/claude-3.5-sonnet")
+LLM_MODEL = os.getenv("LLM_MODEL", "openai/gpt-4o-mini")
 LLM_MAX_RETRIES = 2
 LLM_TIMEOUT_SECONDS = 20.0
 

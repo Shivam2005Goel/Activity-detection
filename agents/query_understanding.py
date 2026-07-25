@@ -66,7 +66,10 @@ def _keyword_regex_fallback_parser(user_query: str) -> Intent:
         target_pattern = "structuring"
 
     # 5. Broad exploration / EDA flags
-    if intent_type == "broad_exploration" or "eda" in query_lower or "summary" in query_lower or "overview" in query_lower:
+    aml_keywords = ["transaction", "customer", "money", "laundering", "bank", "account", "structuring", "smurfing", "layering", "deposit", "withdrawal", "transfer", "fraud", "suspicious", "check", "eda", "summary", "overview", "txns", "aml"]
+    if not any(word in query_lower for word in aml_keywords) and intent_type == "broad_exploration" and not cust_match:
+        intent_type = "out_of_domain"
+    elif intent_type == "broad_exploration" or "eda" in query_lower or "summary" in query_lower or "overview" in query_lower:
         requires_full_eda = True
         requires_ml_detection = True
 
@@ -97,7 +100,7 @@ def _call_openrouter_intent(user_query: str) -> Intent:
     }
 
     schema_example = {
-        "intent_type": "pattern_search | aggregation_query | entity_lookup | broad_exploration",
+        "intent_type": "pattern_search | aggregation_query | entity_lookup | broad_exploration | out_of_domain",
         "target_pattern": "structuring | smurfing | layering | rapid_cashout | none",
         "filters": {
             "date_start": "YYYY-MM-DD or null",
@@ -123,11 +126,10 @@ def _call_openrouter_intent(user_query: str) -> Intent:
     payload = {
         "model": config.LLM_MODEL,
         "messages": [
-            {"role": "system", "content": "You are an intent parser for an AML system. Return raw JSON matching the requested schema exactly."},
+            {"role": "system", "content": "You are an intent parser for an AML system. Return raw JSON matching the requested schema exactly. If the user query is entirely unrelated to finance, banking, or AML, set intent_type to 'out_of_domain'."},
             {"role": "user", "content": prompt}
         ],
-        "temperature": 0.0,
-        "response_format": {"type": "json_object"}
+        "temperature": 0.0
     }
 
     response = httpx.post(
@@ -140,6 +142,12 @@ def _call_openrouter_intent(user_query: str) -> Intent:
     if response.status_code == 200:
         data = response.json()
         raw_json_str = data["choices"][0]["message"]["content"].strip()
+        if raw_json_str.startswith("```"):
+            raw_json_str = re.sub(r"^```(?:json)?\s*", "", raw_json_str)
+            raw_json_str = re.sub(r"\s*```$", "", raw_json_str)
+        json_match = re.search(r"\{.*\}", raw_json_str, re.DOTALL)
+        if json_match:
+            raw_json_str = json_match.group(0)
         parsed_dict = json.loads(raw_json_str)
         return Intent(**parsed_dict)
     else:
@@ -151,15 +159,17 @@ def parse_intent(user_query: str) -> Intent:
     Main Query Understanding Agent entrypoint. Uses OpenRouter LLM when configured
     with automatic fallback to deterministic regex/keyword parser.
     """
+    intent = None
     if config.OPENROUTER_API_KEY:
         try:
             intent = _call_openrouter_intent(user_query)
             log_event("QUERY_UNDERSTANDING_LLM_SUCCESS", {"query": user_query, "intent": intent.model_dump()})
-            return intent
         except Exception as e:
             print(f"[QUERY PARSER FALLBACK] OpenRouter LLM call failed ({str(e)}). Using keyword/regex parser.")
 
-    # Keyword / Regex Fallback
-    intent = _keyword_regex_fallback_parser(user_query)
-    log_event("QUERY_UNDERSTANDING_REGEX_FALLBACK", {"query": user_query, "intent": intent.model_dump()})
+    if intent is None:
+        # Keyword / Regex Fallback
+        intent = _keyword_regex_fallback_parser(user_query)
+        log_event("QUERY_UNDERSTANDING_REGEX_FALLBACK", {"query": user_query, "intent": intent.model_dump()})
+        
     return intent
