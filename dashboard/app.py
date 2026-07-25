@@ -86,7 +86,6 @@ with col3:
     if st.button("3️⃣ Customer CUST4521 Check", use_container_width=True):
         preset_query = "Is customer ID 4521 suspicious?"
 
-# Text Input Area
 user_query = st.text_input(
     "Enter Natural Language AML Query:",
     value=preset_query if preset_query else "Find structuring patterns in the last 30 days",
@@ -97,11 +96,22 @@ run_button = st.button("🚀 Run Dynamic Agent Pipeline", type="primary", use_co
 
 if run_button or preset_query:
     with st.spinner("Parsing intent, dynamically building tool execution plan, and executing agents..."):
+        response = None
         try:
-            response = run_agent(user_query)
-        except Exception as e:
-            st.error(f"Error executing agent pipeline: {str(e)}")
-            response = None
+            import httpx
+            from schemas import AgentResponse
+            api_res = httpx.post("http://localhost:8000/agent/query", json={"query": user_query}, timeout=15.0)
+            if api_res.status_code == 200:
+                response = AgentResponse(**api_res.json())
+        except Exception:
+            pass
+
+        if response is None:
+            try:
+                response = run_agent(user_query)
+            except Exception as e:
+                st.error(f"Error executing agent pipeline: {str(e)}")
+                response = None
 
     if response:
         if response.error:

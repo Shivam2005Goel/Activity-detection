@@ -1,7 +1,10 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent
+# Load .env file automatically if present
+load_dotenv(BASE_DIR / ".env")
 
 # File paths
 DATA_PATH = str(BASE_DIR / "data" / "sample_transactions.csv")

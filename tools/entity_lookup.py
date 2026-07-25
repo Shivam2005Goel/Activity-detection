@@ -19,8 +19,13 @@ def lookup_entity(customer_id: str, df: pd.DataFrame) -> Dict[str, Any]:
     if df is None or df.empty:
         return {"customer_id": customer_id, "found": False, "transactions": [], "flagged_patterns": []}
 
+    clean_id = str(customer_id).upper().strip()
+    if not clean_id.startswith("CUST") and clean_id.isdigit():
+        clean_id = f"CUST{clean_id}"
+
     # Filter to specific customer
-    cust_df = df[df["customer_id"].str.upper() == customer_id.upper()].copy()
+    cust_df = df[df["customer_id"].str.upper() == clean_id].copy()
+    customer_id = clean_id
 
     if cust_df.empty:
         return {
