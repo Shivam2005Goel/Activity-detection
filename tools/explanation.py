@@ -28,6 +28,7 @@ def _call_openrouter_explanation(fact_sheet: Dict[str, Any]) -> str:
     prompt = (
         f"You are an AML Compliance Explanation Engine. Explain the flagged suspicious activity "
         f"in 1-2 concise, professional sentences using ONLY the facts provided below. "
+        f"You MUST explicitly include the 'customer_id' in your explanation text. "
         f"Do NOT invent or introduce any numbers, dates, or details not present in the input.\n\n"
         f"FACT SHEET:\n{json.dumps(fact_sheet, indent=2)}"
     )
@@ -80,7 +81,7 @@ def generate_explanation(item_data: Dict[str, Any], source_data: Any = None) -> 
         "pattern_detected": pattern,
         "evidence_transaction_count": txn_count,
         "total_amount_usd": total_amount,
-        "evidence_transaction_ids": item_data.get("evidence_transaction_ids", [])[:5]
+        "evidence_transaction_ids": item_data.get("evidence_transaction_ids", [])
     }
 
     # Attempt LLM call if API key configured (limit LLM calls to prevent timeouts)

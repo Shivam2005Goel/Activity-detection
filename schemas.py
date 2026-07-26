@@ -11,6 +11,7 @@ class Filters(BaseModel):
     customer_segment: Optional[str] = None
     amount_threshold: Optional[float] = None
     min_transaction_count: Optional[int] = None
+    limit: Optional[int] = None
 
 
 class Intent(BaseModel):

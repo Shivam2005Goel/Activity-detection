@@ -32,4 +32,7 @@ def run_aggregation(df: pd.DataFrame, filters: Optional[Filters] = None) -> pd.D
     filtered_agg = agg_df[agg_df["transaction_count"] >= min_count].copy()
     filtered_agg.sort_values(by="transaction_count", ascending=False, inplace=True)
     
+    if filters and getattr(filters, "limit", None):
+        filtered_agg = filtered_agg.head(filters.limit)
+        
     return filtered_agg

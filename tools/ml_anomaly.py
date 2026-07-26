@@ -127,7 +127,7 @@ def run_ml_detection(df_features: pd.DataFrame) -> List[Dict[str, Any]]:
                 "anomaly_flag": True,
                 "top_features": top_feats,
                 "shap_values": shap_info,
-                "evidence_txn_ids": row["evidence_txn_ids"][:5]  # limit to top 5 evidence IDs
+                "evidence_txn_ids": row["evidence_txn_ids"]  # all evidence IDs
             })
 
     return results

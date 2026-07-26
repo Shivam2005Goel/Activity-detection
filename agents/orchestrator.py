@@ -168,7 +168,7 @@ def run_agent(user_query: str, history: List[Dict[str, str]] = None) -> AgentRes
                         trust_score=85.0,
                         pattern_matched=item_cons["pattern_matched"],
                         explanation=exp_text,
-                        evidence_transaction_ids=ent.get("evidence_transaction_ids", [])[:5],
+                        evidence_transaction_ids=ent.get("evidence_transaction_ids", []),
                         recommended_action=action,
                         consensus={"mode": "entity_lookup", "found": True}
                     ))
@@ -217,7 +217,7 @@ def run_agent(user_query: str, history: List[Dict[str, str]] = None) -> AgentRes
                         trust_score=90.0,
                         pattern_matched="aggregation_threshold_hit",
                         explanation=exp_text,
-                        evidence_transaction_ids=ev_ids[:5],
+                        evidence_transaction_ids=ev_ids,
                         recommended_action=action,
                         consensus={"mode": "aggregation_rule", "transaction_count": cnt}
                     ))
@@ -246,7 +246,7 @@ def run_agent(user_query: str, history: List[Dict[str, str]] = None) -> AgentRes
                             trust_score=cons.get("trust_score", 80.0),
                             pattern_matched=cons.get("pattern_matched"),
                             explanation=exp_text,
-                            evidence_transaction_ids=cons.get("evidence_txn_ids", [])[:5],
+                            evidence_transaction_ids=cons.get("evidence_txn_ids", []),
                             recommended_action=action,
                             consensus=cons,
                             shap_values=cons.get("ml_details", {}).get("shap_values") if cons.get("ml_details") else None
@@ -256,7 +256,7 @@ def run_agent(user_query: str, history: List[Dict[str, str]] = None) -> AgentRes
 
         elif tool_name == "charts":
             from tools.charts import generate_charts
-            state["charts"].extend(generate_charts(state["df"], state["flagged_items"]))
+            state["charts"].extend(generate_charts(state["df"], state["flagged_items"], intent=intent, state=state, user_query=user_query))
 
         log_event("TOOL_EXECUTION_END", {"tool_name": tool_name})
 
@@ -274,9 +274,24 @@ def run_agent(user_query: str, history: List[Dict[str, str]] = None) -> AgentRes
     )
 
     extracted_data = None
-    if state["df"] is not None and not state["df"].empty:
-        extracted_data = state["df"].head(100).to_dict("records")
-        
+    query_lower = user_query.lower()
+    requested_data = any(w in query_lower for w in ["data", "transactions", "records", "rows", "extract", "details", "list"])
+    is_entity = intent.intent_type == "entity_lookup"
+    
+    if (requested_data or is_entity) and state["df"] is not None and not state["df"].empty:
+        if state.get("flagged_items"):
+            evidence_ids = set()
+            for item in state["flagged_items"]:
+                if item.evidence_transaction_ids:
+                    evidence_ids.update(item.evidence_transaction_ids)
+            
+            if evidence_ids:
+                filtered_df = state["df"][state["df"]["transaction_id"].isin(evidence_ids)]
+                extracted_data = filtered_df.to_dict("records")
+            else:
+                extracted_data = []
+        else:
+            extracted_data = []
     summary_text = synthesize_response(user_query, intent, state)
 
     draft_response = AgentResponse(

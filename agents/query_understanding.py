@@ -53,6 +53,12 @@ def _keyword_regex_fallback_parser(user_query: str) -> Intent:
         if amount_match:
             amt_str = amount_match.group(1).replace(",", "")
             filters.amount_threshold = float(amt_str)
+            
+    # Extract "Top N" or "Limit N"
+    limit_match = re.search(r"(?:top|limit)\s+(\d+)", query_lower)
+    if limit_match:
+        intent_type = "aggregation_query"
+        filters.limit = int(limit_match.group(1))
 
     # 4. Pattern Search (structuring / smurfing / layering)
     if "structur" in query_lower or "smurf" in query_lower:
@@ -109,7 +115,8 @@ def _call_openrouter_intent(user_query: str, history: list = None) -> Intent:
             "transaction_type": "string or null",
             "customer_segment": "string or null",
             "amount_threshold": "float or null",
-            "min_transaction_count": "int or null"
+            "min_transaction_count": "int or null",
+            "limit": "int or null"
         },
         "entity_id": "string or null",
         "requires_full_eda": "bool",
@@ -175,5 +182,16 @@ def parse_intent(user_query: str, history: list = None) -> Intent:
         # Keyword / Regex Fallback
         intent = _keyword_regex_fallback_parser(user_query)
         log_event("QUERY_UNDERSTANDING_REGEX_FALLBACK", {"query": user_query, "intent": intent.model_dump()})
+        
+    # Force EDA/Charts if explicit keyword is present
+    query_lower = user_query.lower()
+    if any(w in query_lower for w in ["chart", "graph", "plot", "visual", "eda", "summary", "overview"]):
+        intent.requires_full_eda = True
+        
+    # Force limit extraction if LLM missed it
+    if getattr(intent.filters, "limit", None) is None:
+        limit_match = re.search(r"(?:top|limit)\s+(\d+)", query_lower)
+        if limit_match:
+            intent.filters.limit = int(limit_match.group(1))
         
     return intent

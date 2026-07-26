@@ -13,6 +13,7 @@ import config
 from agents.orchestrator import run_agent
 from safety.audit_logger import get_recent_audit_logs
 import uuid
+import httpx
 
 if 'session_id' not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
@@ -255,16 +256,49 @@ with st.sidebar:
         except Exception:
             pass
 
-# Main Application Tabs
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "🔍 AI Query & Dynamic Pipeline",
     "📊 Dataset & Transaction Explorer",
     "📋 Governance & Audit Trail",
-    "🏆 IBM Benchmark Validation",
+    "📄 SAR Reports",
     "🕰️ Past Conversations",
-    "📡 Live Stream Monitoring",
-    "📄 SAR Reports"
+    "📡 Live Stream Monitoring"
 ])
+
+st.markdown("""
+<style>
+    /* Pop the 5th and 6th tabs into the Streamlit top header beside Deploy */
+    [data-testid="stTabs"] [role="tablist"] button[data-baseweb="tab"]:nth-child(5) {
+        position: fixed !important;
+        top: 10px !important;
+        right: 230px !important;
+        z-index: 999999 !important;
+        background-color: #1E293B !important;
+        border: 1px solid #334155 !important;
+        height: 35px !important;
+        border-radius: 6px !important;
+        padding: 0 15px !important;
+    }
+    
+    [data-testid="stTabs"] [role="tablist"] button[data-baseweb="tab"]:nth-child(6) {
+        position: fixed !important;
+        top: 10px !important;
+        right: 20px !important;
+        z-index: 999999 !important;
+        background-color: #1E293B !important;
+        border: 1px solid #334155 !important;
+        height: 35px !important;
+        border-radius: 6px !important;
+        padding: 0 15px !important;
+    }
+
+    [data-testid="stTabs"] [role="tablist"] button[data-baseweb="tab"]:nth-child(5):hover,
+    [data-testid="stTabs"] [role="tablist"] button[data-baseweb="tab"]:nth-child(6):hover {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+
+</style>
+""", unsafe_allow_html=True)
 
 # Tab 1: AI Query & Dynamic Pipeline Execution
 with tab1:
@@ -310,15 +344,21 @@ with tab1:
                 api_res = httpx.post(
                     "http://localhost:8000/agent/query", 
                     json={"query": user_query, "session_id": st.session_state.session_id}, 
-                    timeout=15.0
+                    timeout=60.0
                 )
                 if api_res.status_code == 200:
                     response = AgentResponse(**api_res.json())
-            except Exception:
-                pass
-
+                else:
+                    st.error(f"API Error: {api_res.text}")
+                    response = None
+            except Exception as e:
+                # Fallback to local execution if API unavailable
+                st.warning(f"API unavailable or timed out ({str(e)}). Running local agent...")
+                response = None
+                
             if response is None:
                 try:
+                    from agents.orchestrator import run_agent
                     response = run_agent(user_query)
                 except Exception as e:
                     st.error(f"Execution Error: {str(e)}")
@@ -329,8 +369,9 @@ with tab1:
 
     if "current_response" in st.session_state and st.session_state.current_response:
         response = st.session_state.current_response
-        if getattr(response, "error", None):
-            st.error(f"Error: {response.error}")
+        if response:
+            if getattr(response, "error", None):
+                st.error(f"Error: {response.error}")
 
             st.markdown("---")
 
@@ -467,8 +508,8 @@ with tab1:
                                         "session_id": st.session_state.session_id
                                     })
                                     st.success("Feedback saved!")
-                                except Exception:
-                                    st.error("Failed to save.")
+                                except Exception as e:
+                                    st.error(f"Failed to save: {str(e)}")
                         with f_col2:
                             if st.button("👎 Mark False Positive", key=f"fp_{item.customer_id}"):
                                 try:
@@ -478,8 +519,8 @@ with tab1:
                                         "session_id": st.session_state.session_id
                                     })
                                     st.success("Feedback saved!")
-                                except Exception:
-                                    st.error("Failed to save.")
+                                except Exception as e:
+                                    st.error(f"Failed to save: {str(e)}")
 
             else:
                 st.info("No suspicious entities met the flagging threshold for this query.")
@@ -543,37 +584,6 @@ with tab3:
         st.dataframe(df_logs, use_container_width=True)
     else:
         st.info("No audit logs available.")
-
-# Tab 4: IBM Benchmark Validation
-with tab4:
-    st.markdown("#### 🏆 Offline Supervised vs Unsupervised Benchmark Validation")
-    st.caption("Evaluated on Kaggle IBM Transactions for Anti-Money Laundering (AML) held-out dataset.")
-    
-    backtest_path = Path(config.BACKTEST_RESULTS_PATH)
-    if backtest_path.exists():
-        try:
-            with open(backtest_path, "r") as f:
-                b_results = json.load(f)
-            
-            col_sup, col_unsup = st.columns(2)
-            with col_sup:
-                st.markdown("### 🤖 Supervised Model (XGBoost)")
-                sup_data = b_results.get("supervised_model", {})
-                st.metric("Precision", sup_data.get("precision"))
-                st.metric("Recall", sup_data.get("recall"))
-                st.metric("F1 Score", sup_data.get("f1_score"))
-                st.json(sup_data.get("confusion_matrix", []), expanded=True)
-
-            with col_unsup:
-                st.markdown("### 🔍 Unsupervised Model (PyOD IsolationForest)")
-                unsup_data = b_results.get("unsupervised_model", {})
-                st.metric("Precision", unsup_data.get("precision"))
-                st.metric("Recall", unsup_data.get("recall"))
-                st.metric("F1 Score", unsup_data.get("f1_score"))
-        except Exception as e:
-            st.error(f"Error reading backtest results: {str(e)}")
-    else:
-        st.info("Run `python scripts/backtest_ibm_dataset.py` to generate backtest metrics.")
 
 # Tab 5: Past Conversations
 with tab5:
@@ -674,8 +684,8 @@ with tab6:
     else:
         st.info("Stream log not found. Run `python scripts/stream_processor.py` to simulate a stream.")
 
-# Tab 7: SAR Reports
-with tab7:
+# Tab 4: SAR Reports
+with tab4:
     st.markdown("#### 📄 Suspicious Activity Reports (SARs)")
     st.caption("View auto-generated SARs triggered by Human-in-the-Loop 'True Positive' feedback.")
     

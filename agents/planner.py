@@ -38,12 +38,26 @@ def build_plan(intent: Intent) -> Tuple[List[str], List[str]]:
             
         plan.extend(["consensus", "risk_classifier", "explanation", "escalation"])
 
-    elif intent.intent_type == "broad_exploration" or intent.requires_full_eda or intent.requires_ml_detection:
+    elif intent.intent_type == "broad_exploration":
         plan = ["data_loader", "eda", "feature_engineering", "ml_anomaly", "consensus", "risk_classifier", "explanation", "escalation", "charts"]
 
     else:
         # Default fallback execution path
         plan = ["data_loader", "feature_engineering", "ml_anomaly", "consensus", "risk_classifier", "explanation", "escalation"]
+
+    # Injections based on boolean flags (if they aren't already in the plan)
+    if intent.requires_full_eda:
+        if "eda" not in plan:
+            plan.insert(1, "eda")  # Right after data_loader
+        if "charts" not in plan:
+            plan.append("charts")
+            
+    if intent.requires_ml_detection and "ml_anomaly" not in plan:
+        if "feature_engineering" not in plan:
+            plan.insert(2, "feature_engineering")
+        plan.insert(3, "ml_anomaly")
+        if "consensus" not in plan:
+            plan.insert(4, "consensus")
 
     # Calculate skipped tools (preserving registry order)
     skipped = [t for t in all_tools if t not in plan]

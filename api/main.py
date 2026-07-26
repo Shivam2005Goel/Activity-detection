@@ -110,6 +110,7 @@ def submit_feedback(req: FeedbackRequest):
     Endpoint for HITL feedback (True Positive / False Positive).
     Generates a SAR report on True Positive.
     """
+    from datetime import datetime
     feedback_file = Path(BASE_DIR) / "feedback_log.jsonl"
     feedback_entry = {
         "timestamp": datetime.utcnow().isoformat() + "Z",
@@ -119,7 +120,6 @@ def submit_feedback(req: FeedbackRequest):
     }
     
     try:
-        from datetime import datetime
         with open(feedback_file, "a", encoding="utf-8") as f:
             f.write(json.dumps(feedback_entry) + "\n")
         log_event("HITL_FEEDBACK_RECEIVED", feedback_entry)

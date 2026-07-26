@@ -74,12 +74,28 @@ def synthesize_response(user_query: str, intent: Intent, state: dict) -> str:
     """
     context_parts = []
     
-    if state.get("df") is not None:
-        context_parts.append(f"Total Transactions Found: {len(state['df'])}")
-    if state.get("aggregation_df") is not None:
-        context_parts.append(f"Total Unique Customers Involved: {len(state['aggregation_df'])}")
     if state.get("flagged_items"):
         context_parts.append(f"Total High-Risk Suspicious Entities Flagged: {len(state['flagged_items'])}")
+        
+        # Calculate actual evidence transactions involved
+        evidence_ids = set()
+        customer_ids = []
+        for item in state["flagged_items"]:
+            customer_ids.append(item.customer_id)
+            if item.evidence_transaction_ids:
+                evidence_ids.update(item.evidence_transaction_ids)
+                
+        context_parts.append(f"Total Relevant/Evidence Transactions Involved: {len(evidence_ids)}")
+        
+        # Inject the actual IDs so the LLM includes them in the summary if the list is small
+        if len(customer_ids) <= 10:
+            context_parts.append(f"Specific Customer IDs flagged: {', '.join(customer_ids)}")
+    else:
+        if state.get("df") is not None:
+            context_parts.append(f"Total Transactions Scanned: {len(state['df'])}")
+            
+    if state.get("aggregation_df") is not None:
+        context_parts.append(f"Total Unique Customers Evaluated: {len(state['aggregation_df'])}")
         
     context_str = "\n".join(context_parts)
     
