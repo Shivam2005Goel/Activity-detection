@@ -102,6 +102,28 @@ Our architecture follows a strictly planned Agentic Execution flow decoupled int
 
 ---
 
+## 🤖 Agentic Features & Human-in-the-Loop
+
+Unlike traditional fixed pipelines, this system leverages true **Agentic capabilities**:
+- **Dynamic Routing**: The orchestrator acts as a router, selectively triggering data-heavy ML anomaly detection only when necessary, saving compute costs and time.
+- **Self-Correction & Fallbacks**: If the primary LLM fails to parse intent or generate a chart, the system automatically falls back to offline, deterministic regex logic and pre-built visualizations, ensuring 100% uptime.
+- **Human-in-the-Loop (HITL)**: This agent acts as a *co-pilot*, not an autopilot.
+  - Generates Suspicious Activity Reports (SARs) as *drafts* for human review (in the `sars/` directory).
+  - Provides strict evidence (exact Transaction IDs) allowing investigators to manually cross-reference the data grid.
+  - The final escalation verdict (e.g., "File SAR", "Monitor") is a recommendation, leaving the ultimate regulatory decision to the compliance officer.
+
+---
+
+## 🔒 Security & Data Privacy
+
+Handling financial data requires strict security constraints. Our agent is designed with safety as a first-class citizen:
+- **No Data Exfiltration**: Raw transaction data (account balances, user PII, transaction IDs) is **never** sent to the LLM. The LLM only receives aggregated schema metadata (e.g., `["amount", "date"]`) to write charting logic, or high-level risk scores to draft summaries.
+- **Code Execution Sandbox**: The charting agent generates Python code (`Plotly`) dynamically. However, this code is executed in a highly restricted `local_scope`, preventing it from accessing the OS, making network requests, or reading unauthorized files.
+- **Verifier Fact-Checking**: LLMs are prone to hallucinating numbers. The `Verifier Agent` intercepts the LLM's natural language output and mathematically cross-checks it against the local Pandas dataframe. If the LLM claims "5 transactions" but the database says "4", the Verifier overwrites the hallucination with facts.
+- **Immutable Audit Logging**: Every query, intent parsed, tool called, and ML score generated is appended to a local `audit_log.jsonl` to satisfy regulatory audit requirements.
+
+---
+
 ## 🚀 Installation & Quick Start
 
 Follow these steps to run the system locally on your machine.
