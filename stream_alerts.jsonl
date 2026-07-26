@@ -709,3 +709,12 @@
 {"timestamp": "2026-07-26T10:13:23.881757Z", "customer_id": "CUST0022", "event_type": "STREAM_ALERT", "amount": 11248.72, "reason": "Sudden volume spike detected in stream"}
 {"timestamp": "2026-07-26T10:13:27.884724Z", "customer_id": "CUST0043", "event_type": "STREAM_ALERT", "amount": 6073.48, "reason": "High frequency transfer pattern"}
 {"timestamp": "2026-07-26T10:14:11.919265Z", "customer_id": "CUST0088", "event_type": "STREAM_ALERT", "amount": 8301.51, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T10:14:30.942354Z", "customer_id": "CUST0069", "event_type": "STREAM_ALERT", "amount": 17069.98, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T10:14:57.986198Z", "customer_id": "CUST0033", "event_type": "STREAM_ALERT", "amount": 15178.96, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T10:15:01.992099Z", "customer_id": "CUST0070", "event_type": "STREAM_ALERT", "amount": 630.27, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T10:15:14.998087Z", "customer_id": "CUST0008", "event_type": "STREAM_ALERT", "amount": 7493.1, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T10:15:25.003780Z", "customer_id": "CUST0043", "event_type": "STREAM_ALERT", "amount": 12515.36, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T10:15:53.018575Z", "customer_id": "CUST0019", "event_type": "STREAM_ALERT", "amount": 9862.73, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T10:16:11.029023Z", "customer_id": "CUST0041", "event_type": "STREAM_ALERT", "amount": 18894.5, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T10:16:39.048988Z", "customer_id": "CUST0051", "event_type": "STREAM_ALERT", "amount": 18189.52, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T10:17:56.102651Z", "customer_id": "CUST0038", "event_type": "STREAM_ALERT", "amount": 11296.38, "reason": "Sudden volume spike detected in stream"}
