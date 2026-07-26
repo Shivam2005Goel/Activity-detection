@@ -13,7 +13,6 @@ services:
     volumes:
       - ./data:/app/data
       - ./sars:/app/sars
-      - ./audit_log.jsonl:/app/audit_log.jsonl
     restart: unless-stopped
 
   ui:
