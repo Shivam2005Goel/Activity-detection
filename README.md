@@ -27,34 +27,43 @@ An intelligent orchestrator interprets the intent, dynamically plans the sequenc
 
 ```mermaid
 graph TD
-    User([User / Investigator]) -->|Natural Language Query| UI[Streamlit Dashboard]
-    UI -->|POST /agent/query| API[FastAPI Backend]
+    %% Custom Styles
+    classDef userNode fill:#8B5CF6,stroke:#4C1D95,stroke-width:3px,color:#fff,font-weight:bold,rx:10,ry:10
+    classDef ui fill:#3B82F6,stroke:#1E3A8A,stroke-width:3px,color:#fff,font-weight:bold,rx:10,ry:10
+    classDef core fill:#10B981,stroke:#064E3B,stroke-width:3px,color:#fff,font-weight:bold,rx:10,ry:10
+    classDef agent fill:#F59E0B,stroke:#78350F,stroke-width:3px,color:#fff,font-weight:bold,rx:10,ry:10
+    classDef tool fill:#6366F1,stroke:#312E81,stroke-width:2px,color:#fff,rx:5,ry:5
+    classDef db fill:#EC4899,stroke:#831843,stroke-width:2px,color:#fff,rx:5,ry:5
+    classDef critic fill:#EF4444,stroke:#7F1D1D,stroke-width:3px,color:#fff,font-weight:bold,rx:10,ry:10
+
+    User([User / Investigator]):::userNode -->|Natural Language Query| UI[Streamlit Dashboard]:::ui
+    UI -->|POST /agent/query| API[FastAPI Backend]:::core
     
     subgraph Agentic Orchestrator
-        API --> QU[Query Understanding Agent]
-        QU -->|Extracts Intent & Filters| Planner[Dynamic Orchestrator]
-        Planner -->|Builds Execution Graph| Tools{Tool Dispatcher}
+        API --> QU[Query Understanding Agent]:::agent
+        QU -->|Extracts Intent & Filters| Planner[Dynamic Orchestrator]:::agent
+        Planner -->|Builds Execution Graph| Tools{Tool Dispatcher}:::core
     end
     
     subgraph Data & Analytics Tools
-        Tools --> DL[(Data Loader)]
-        DL --> FE[Feature Engineering]
-        FE --> EDA[Dynamic Charting]
+        Tools --> DL[(Data Loader)]:::db
+        DL --> FE[Feature Engineering]:::tool
+        FE --> EDA[Dynamic Charting]:::tool
         
-        FE --> ML[PyOD Anomaly Detection]
-        FE --> SR[Structuring Rules]
-        FE --> GL[NetworkX Graph Layering]
+        FE --> ML[PyOD Anomaly Detection]:::tool
+        FE --> SR[Structuring Rules]:::tool
+        FE --> GL[NetworkX Graph Layering]:::tool
         
-        ML --> CE{Consensus Engine}
+        ML --> CE{Consensus Engine}:::core
         SR --> CE
         GL --> CE
         
-        CE --> RC[Risk Classifier]
-        RC --> EX[Explainability Agent]
-        EX --> Esc[Escalation Recommender]
+        CE --> RC[Risk Classifier]:::tool
+        RC --> EX[Explainability Agent]:::agent
+        EX --> Esc[Escalation Recommender]:::tool
     end
     
-    Esc --> Verifier[Verifier / Critic Agent]
+    Esc --> Verifier[Verifier / Critic Agent]:::critic
     Verifier -->|Validates Facts| API
     API -->|Returns Verified JSON| UI
 ```
