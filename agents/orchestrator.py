@@ -12,21 +12,25 @@ from agents.query_understanding import parse_intent
 from agents.capability_validator import validate_capability
 from agents.planner import build_plan
 from agents.verifier import verify
+from agents.synthesizer import synthesize_response
 from tools.tool_registry import TOOL_REGISTRY
 from safety.audit_logger import log_event
 from safety.bias_checker import check_flag_rate_by_segment
 
 
-def run_agent(user_query: str) -> AgentResponse:
+def run_agent(user_query: str, history: List[Dict[str, str]] = None) -> AgentResponse:
     """
     Main Orchestrator Agent: Parses natural language query, dynamically plans tool execution path,
     executes selected tools in sequence, aggregates consensus verdicts, runs verification,
     and returns a structured AgentResponse.
     """
-    log_event("QUERY_RECEIVED", {"query": user_query})
+    if history is None:
+        history = []
+        
+    log_event("QUERY_RECEIVED", {"query": user_query, "history_len": len(history)})
 
-    # Step 1: Parse Query Intent
-    intent: Intent = parse_intent(user_query)
+    # Step 1: Parse Query Intent with conversational context
+    intent: Intent = parse_intent(user_query, history)
 
     # Step 2: Capability Validator
     is_supported, reason = validate_capability(intent, user_query)
@@ -244,7 +248,8 @@ def run_agent(user_query: str) -> AgentResponse:
                             explanation=exp_text,
                             evidence_transaction_ids=cons.get("evidence_txn_ids", [])[:5],
                             recommended_action=action,
-                            consensus=cons
+                            consensus=cons,
+                            shap_values=cons.get("ml_details", {}).get("shap_values") if cons.get("ml_details") else None
                         ))
 
             state["flagged_items"] = flagged_list
@@ -271,6 +276,8 @@ def run_agent(user_query: str) -> AgentResponse:
     extracted_data = None
     if state["df"] is not None and not state["df"].empty:
         extracted_data = state["df"].head(100).to_dict("records")
+        
+    summary_text = synthesize_response(user_query, intent, state)
 
     draft_response = AgentResponse(
         query=user_query,
@@ -278,7 +285,8 @@ def run_agent(user_query: str) -> AgentResponse:
         results=state["flagged_items"],
         execution_summary=summary,
         charts=state["charts"],
-        extracted_data=extracted_data
+        extracted_data=extracted_data,
+        summary_text=summary_text
     )
 
     # Step 6: Verifier Agent Pass

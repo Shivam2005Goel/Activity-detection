@@ -88,11 +88,26 @@ def run_ml_detection(df_features: pd.DataFrame) -> List[Dict[str, Any]]:
         else:
             scores = np.zeros_like(raw_scores)
 
+    # Calculate SHAP values for explainability
+    shap_values_dict = {}
+    try:
+        import shap
+        # IsolationForest (either sklearn or PyOD wrapper) works with TreeExplainer
+        # PyOD IForest often exposes .detector_ or .estimators_
+        explainer = shap.TreeExplainer(clf)
+        shap_vals = explainer.shap_values(feature_matrix.values)
+        
+        for idx in range(len(feature_matrix)):
+            # Pair feature names with their absolute SHAP contribution
+            feat_shap = dict(zip(feature_matrix.columns, np.abs(shap_vals[idx])))
+            shap_values_dict[idx] = feat_shap
+    except Exception as e:
+        print(f"[SHAP] Explainability calculation failed: {str(e)}")
+
     results = []
     for idx, row in cust_summary.iterrows():
         norm_score = float(scores[idx])
         if norm_score >= config.ML_ANOMALY_SCORE_THRESHOLD:
-            # Determine top feature contributions based on zscore or extreme values
             top_feats = []
             if row["max_zscore"] > 3.0:
                 top_feats.append("high_amount_zscore")
@@ -103,11 +118,15 @@ def run_ml_detection(df_features: pd.DataFrame) -> List[Dict[str, Any]]:
             if not top_feats:
                 top_feats.append("multivariate_statistical_outlier")
 
+            # Add SHAP if computed
+            shap_info = shap_values_dict.get(idx, {})
+
             results.append({
                 "customer_id": row["customer_id"],
                 "ml_score": round(norm_score, 3),
                 "anomaly_flag": True,
                 "top_features": top_feats,
+                "shap_values": shap_info,
                 "evidence_txn_ids": row["evidence_txn_ids"][:5]  # limit to top 5 evidence IDs
             })
 

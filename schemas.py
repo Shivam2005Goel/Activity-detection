@@ -34,6 +34,7 @@ class FlaggedItem(BaseModel):
     evidence_transaction_ids: List[str] = Field(default_factory=list)
     recommended_action: Literal["monitor", "review", "report"]
     consensus: Dict[str, Any] = Field(default_factory=dict)            # {"rule_engine": "...", "ml_model": "...", "agreement": "..."}
+    shap_values: Optional[Dict[str, float]] = None
 
 
 class ExecutionSummary(BaseModel):
@@ -52,4 +53,5 @@ class AgentResponse(BaseModel):
     execution_summary: ExecutionSummary
     charts: List[str] = Field(default_factory=list)      # file paths or base64 references
     extracted_data: Optional[List[Dict[str, Any]]] = None
+    summary_text: Optional[str] = None
     error: Optional[str] = None

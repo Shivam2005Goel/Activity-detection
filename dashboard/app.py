@@ -12,6 +12,11 @@ sys.path.insert(0, str(BASE_DIR))
 import config
 from agents.orchestrator import run_agent
 from safety.audit_logger import get_recent_audit_logs
+import uuid
+
+if 'session_id' not in st.session_state:
+    st.session_state.session_id = str(uuid.uuid4())
+
 
 # Streamlit Page Config
 st.set_page_config(
@@ -251,11 +256,14 @@ with st.sidebar:
             pass
 
 # Main Application Tabs
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "🔍 AI Query & Dynamic Pipeline",
     "📊 Dataset & Transaction Explorer",
     "📋 Governance & Audit Trail",
-    "🏆 IBM Benchmark Validation"
+    "🏆 IBM Benchmark Validation",
+    "🕰️ Past Conversations",
+    "📡 Live Stream Monitoring",
+    "📄 SAR Reports"
 ])
 
 # Tab 1: AI Query & Dynamic Pipeline Execution
@@ -294,11 +302,16 @@ with tab1:
 
     if run_button or preset_query:
         with st.spinner("Processing natural language intent & executing dynamic tool plan..."):
+            st.session_state.current_response = None
             response = None
             try:
                 import httpx
                 from schemas import AgentResponse
-                api_res = httpx.post("http://localhost:8000/agent/query", json={"query": user_query}, timeout=15.0)
+                api_res = httpx.post(
+                    "http://localhost:8000/agent/query", 
+                    json={"query": user_query, "session_id": st.session_state.session_id}, 
+                    timeout=15.0
+                )
                 if api_res.status_code == 200:
                     response = AgentResponse(**api_res.json())
             except Exception:
@@ -310,10 +323,14 @@ with tab1:
                 except Exception as e:
                     st.error(f"Execution Error: {str(e)}")
                     response = None
+                    
+            if response:
+                st.session_state.current_response = response
 
-        if response:
-            if response.error:
-                st.error(f"Error: {response.error}")
+    if "current_response" in st.session_state and st.session_state.current_response:
+        response = st.session_state.current_response
+        if getattr(response, "error", None):
+            st.error(f"Error: {response.error}")
 
             st.markdown("---")
 
@@ -351,6 +368,10 @@ with tab1:
                 """, unsafe_allow_html=True)
 
             st.markdown("<br>", unsafe_allow_html=True)
+            
+            if getattr(response, 'summary_text', None):
+                st.info(f"💡 **Insight:** {response.summary_text}")
+                st.markdown("<br>", unsafe_allow_html=True)
 
             # Dynamic Execution Plan Trace
             st.markdown("#### 🧩 Dynamic Tool Path Visualization")
@@ -412,9 +433,53 @@ with tab1:
                         st.markdown(f"<p style='margin-top:10px; font-size:1.05rem;'><b>Factual Explanation:</b> {item.explanation}</p>", unsafe_allow_html=True)
                         st.markdown(f"**Evidence Transaction IDs:** `{item.evidence_transaction_ids}`")
                         
+                        if getattr(item, 'shap_values', None):
+                            st.markdown("**🧠 ML Explainability (SHAP Feature Importance):**")
+                            shap_df = pd.DataFrame(list(item.shap_values.items()), columns=["Feature", "Impact"])
+                            shap_df = shap_df.sort_values(by="Impact", ascending=True)
+                            
+                            import plotly.express as px
+                            fig_shap = px.bar(
+                                shap_df, 
+                                x="Impact", 
+                                y="Feature", 
+                                orientation="h",
+                                title="Feature Contributions to Anomaly Score",
+                                color="Impact",
+                                color_continuous_scale="Reds"
+                            )
+                            fig_shap.update_layout(height=250, margin=dict(l=0, r=0, t=30, b=0))
+                            st.plotly_chart(fig_shap, use_container_width=True)
+
                         if item.consensus:
                             st.markdown("**Consensus Verdict Breakdown:**")
                             st.json(item.consensus, expanded=False)
+
+                        # HITL Feedback
+                        st.markdown("**Analyst Feedback:**")
+                        f_col1, f_col2, f_col3 = st.columns([1,1,3])
+                        with f_col1:
+                            if st.button("👍 Confirm Suspicion", key=f"tp_{item.customer_id}"):
+                                try:
+                                    httpx.post("http://localhost:8000/agent/feedback", json={
+                                        "customer_id": item.customer_id,
+                                        "feedback": "True Positive",
+                                        "session_id": st.session_state.session_id
+                                    })
+                                    st.success("Feedback saved!")
+                                except Exception:
+                                    st.error("Failed to save.")
+                        with f_col2:
+                            if st.button("👎 Mark False Positive", key=f"fp_{item.customer_id}"):
+                                try:
+                                    httpx.post("http://localhost:8000/agent/feedback", json={
+                                        "customer_id": item.customer_id,
+                                        "feedback": "False Positive",
+                                        "session_id": st.session_state.session_id
+                                    })
+                                    st.success("Feedback saved!")
+                                except Exception:
+                                    st.error("Failed to save.")
 
             else:
                 st.info("No suspicious entities met the flagging threshold for this query.")
@@ -509,3 +574,130 @@ with tab4:
             st.error(f"Error reading backtest results: {str(e)}")
     else:
         st.info("Run `python scripts/backtest_ibm_dataset.py` to generate backtest metrics.")
+
+# Tab 5: Past Conversations
+with tab5:
+    st.markdown("#### 🕰️ Past Conversations & Queries")
+    st.caption("A chronological history of all your past queries and their results.")
+
+    all_logs = get_recent_audit_logs(limit=1000)
+    
+    # We will reconstruct conversation pairs: QUERY_RECEIVED -> AGENT_RESPONSE_GENERATED
+    conversations = []
+    
+    current_query = None
+    
+    # Logs are returned newest first by get_recent_audit_logs, so let's reverse to parse them chronologically
+    for entry in reversed(all_logs):
+        if entry.get("event_type") == "QUERY_RECEIVED":
+            # If there's an unfinished query, store it before starting a new one
+            if current_query:
+                conversations.append(current_query)
+                
+            q_text = entry.get("payload", {}).get("query", "").strip()
+            if not q_text:
+                current_query = None
+                continue
+                
+            current_query = {
+                "timestamp": entry.get("timestamp"),
+                "query": q_text,
+                "response": None
+            }
+            
+        elif entry.get("event_type") == "AGENT_RESPONSE_GENERATED" and current_query:
+            payload = entry.get("payload", {})
+            # Only match if the query text matches to avoid desync
+            if payload.get("query") == current_query["query"]:
+                current_query["response"] = payload
+                conversations.append(current_query)
+                current_query = None
+                
+    if current_query:
+        conversations.append(current_query)
+        
+    # Reverse back to show newest at the top
+    conversations.reverse()
+    
+    if not conversations:
+        st.info("No past conversations found. Try asking a query in the AI Query tab!")
+    else:
+        for conv in conversations:
+            timestamp = conv["timestamp"][:19].replace("T", " ")
+            q = conv["query"]
+            resp = conv["response"]
+            
+            with st.container():
+                st.markdown(f"**🗣️ You** `({timestamp})`")
+                st.markdown(f"> {q}")
+                
+                if resp:
+                    flags = resp.get("flagged_count", 0)
+                    status = resp.get("verification_status", "Unknown")
+                    status_color = "#10B981" if status == "Passed" else "#F59E0B"
+                    
+                    st.markdown(f"**🛡️ Agentic AML System**")
+                    st.markdown(f"Entities Flagged: **{flags}** | Verification: <span style='color:{status_color}'>**{status}**</span>", unsafe_allow_html=True)
+                else:
+                    st.markdown(f"**🛡️ Agentic AML System**")
+                    st.markdown(f"*(No complete response recorded for this query)*")
+                
+                st.divider()
+
+# Tab 6: Live Stream Monitoring
+with tab6:
+    st.markdown("#### 📡 Live Streaming AML Detection")
+    st.caption("Monitoring real-time transactions from `stream_alerts.jsonl`.")
+    
+    stream_file = Path(config.BASE_DIR) / "stream_alerts.jsonl"
+    
+    if st.button("🔄 Refresh Stream"):
+        st.rerun()
+        
+    if stream_file.exists():
+        alerts = []
+        with open(stream_file, "r") as f:
+            for line in f:
+                if line.strip():
+                    alerts.append(json.loads(line))
+        
+        if alerts:
+            # Show last 20 alerts
+            df_alerts = pd.DataFrame(alerts[-20:])
+            # Reverse to show newest at top
+            df_alerts = df_alerts.iloc[::-1].reset_index(drop=True)
+            
+            st.markdown(f"**Total Streaming Alerts:** {len(alerts)}")
+            st.dataframe(df_alerts, use_container_width=True)
+        else:
+            st.info("No alerts generated yet. Run `python scripts/stream_processor.py` to simulate a stream.")
+    else:
+        st.info("Stream log not found. Run `python scripts/stream_processor.py` to simulate a stream.")
+
+# Tab 7: SAR Reports
+with tab7:
+    st.markdown("#### 📄 Suspicious Activity Reports (SARs)")
+    st.caption("View auto-generated SARs triggered by Human-in-the-Loop 'True Positive' feedback.")
+    
+    sars_dir = Path(config.BASE_DIR) / "sars"
+    if sars_dir.exists() and list(sars_dir.glob("*.md")):
+        sar_files = sorted(list(sars_dir.glob("*.md")), reverse=True)
+        selected_sar = st.selectbox("Select a SAR Report to view:", options=sar_files, format_func=lambda x: x.name)
+        
+        if selected_sar:
+            with open(selected_sar, "r", encoding="utf-8") as f:
+                content = f.read()
+            st.markdown("---")
+            st.markdown(content)
+            
+            st.download_button(
+                label="📥 Download SAR (.md)",
+                data=content,
+                file_name=selected_sar.name,
+                mime="text/markdown",
+                use_container_width=True
+            )
+    else:
+        st.info("No SAR reports generated yet. Run a query in Tab 1 and click '👍 Confirm Suspicion' to generate one.")
+
+

@@ -42,3 +42,20 @@ LLM_TIMEOUT_SECONDS = 20.0
 
 # Default fallback filter window if no date range detected in query
 DEFAULT_LOOKBACK_DAYS = 90
+
+# ---- DYNAMIC CONFIG OVERRIDE ----
+# This allows external scripts (like feedback_optimizer.py) to dynamically tune thresholds
+DYNAMIC_CONFIG_PATH = BASE_DIR / "dynamic_config.json"
+if DYNAMIC_CONFIG_PATH.exists():
+    try:
+        import json
+        with open(DYNAMIC_CONFIG_PATH, "r", encoding="utf-8") as f:
+            dynamic_config = json.load(f)
+            
+        # Safely override variables if they exist in the dynamic config
+        if "ML_ANOMALY_SCORE_THRESHOLD" in dynamic_config:
+            ML_ANOMALY_SCORE_THRESHOLD = float(dynamic_config["ML_ANOMALY_SCORE_THRESHOLD"])
+        if "STRUCTURING_AMOUNT_THRESHOLD" in dynamic_config:
+            STRUCTURING_AMOUNT_THRESHOLD = float(dynamic_config["STRUCTURING_AMOUNT_THRESHOLD"])
+    except Exception as e:
+        print(f"[CONFIG WARNING] Failed to load dynamic_config.json: {e}")

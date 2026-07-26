@@ -87,7 +87,7 @@ def _keyword_regex_fallback_parser(user_query: str) -> Intent:
 
 
 @retry_llm_call(max_retries=config.LLM_MAX_RETRIES, delay_seconds=1.0)
-def _call_openrouter_intent(user_query: str) -> Intent:
+def _call_openrouter_intent(user_query: str, history: list = None) -> Intent:
     """
     Calls OpenRouter LLM for structured JSON Intent parsing.
     """
@@ -117,8 +117,12 @@ def _call_openrouter_intent(user_query: str) -> Intent:
         "confidence": "float 0-1"
     }
 
+    history_text = ""
+    if history:
+        history_text = "Previous Conversation History:\n" + "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in history[-3:]]) + "\n\n"
+
     prompt = (
-        f"Extract intent details from this financial query: '{user_query}'\n\n"
+        f"{history_text}Extract intent details from this new financial query: '{user_query}'\n\n"
         f"Return ONLY valid JSON matching this schema:\n{json.dumps(schema_example, indent=2)}\n"
         f"Current date: {datetime.now().strftime('%Y-%m-%d')}"
     )
@@ -126,7 +130,7 @@ def _call_openrouter_intent(user_query: str) -> Intent:
     payload = {
         "model": config.LLM_MODEL,
         "messages": [
-            {"role": "system", "content": "You are an intent parser for an AML system. Return raw JSON matching the requested schema exactly. If the user query is entirely unrelated to finance, banking, or AML, set intent_type to 'out_of_domain'."},
+            {"role": "system", "content": "You are an intent parser for an AML system. Return raw JSON matching the requested schema exactly. Use the previous conversation history to resolve pronouns (e.g., 'they', 'them') or missing context in the current query. If the user query is entirely unrelated to finance, banking, or AML, set intent_type to 'out_of_domain'."},
             {"role": "user", "content": prompt}
         ],
         "temperature": 0.0
@@ -154,7 +158,7 @@ def _call_openrouter_intent(user_query: str) -> Intent:
         raise RuntimeError(f"OpenRouter status {response.status_code}: {response.text}")
 
 
-def parse_intent(user_query: str) -> Intent:
+def parse_intent(user_query: str, history: list = None) -> Intent:
     """
     Main Query Understanding Agent entrypoint. Uses OpenRouter LLM when configured
     with automatic fallback to deterministic regex/keyword parser.
@@ -162,7 +166,7 @@ def parse_intent(user_query: str) -> Intent:
     intent = None
     if config.OPENROUTER_API_KEY:
         try:
-            intent = _call_openrouter_intent(user_query)
+            intent = _call_openrouter_intent(user_query, history)
             log_event("QUERY_UNDERSTANDING_LLM_SUCCESS", {"query": user_query, "intent": intent.model_dump()})
         except Exception as e:
             print(f"[QUERY PARSER FALLBACK] OpenRouter LLM call failed ({str(e)}). Using keyword/regex parser.")
