@@ -104,15 +104,15 @@ graph TD
 ## 📸 Application Showcase
 
 <p align="center">
-  <img src="./img1.PNG" width="48%" />
-  <img src="./img2.PNG" width="48%" />
-  <img src="./img31.PNG" width="48%" />
-  <img src="./img4.PNG" width="48%" />
-  <img src="./img5.PNG" width="48%" />
-  <img src="./img6.PNG" width="48%" />
-  <img src="./img7.PNG" width="48%" />
-  <img src="./img8.PNG" width="48%" />
-  <img src="./img9.PNG" width="96%" />
+  <img src="assets/img1.PNG" width="48%" />
+  <img src="assets/img2.PNG" width="48%" />
+  <img src="assets/img31.PNG" width="48%" />
+  <img src="assets/img4.PNG" width="48%" />
+  <img src="assets/img5.PNG" width="48%" />
+  <img src="assets/img6.PNG" width="48%" />
+  <img src="assets/img7.PNG" width="48%" />
+  <img src="assets/img8.PNG" width="48%" />
+  <img src="assets/img9.PNG" width="96%" />
 </p>
 
 ---
