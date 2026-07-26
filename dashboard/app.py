@@ -214,7 +214,7 @@ st.markdown("""
 st.markdown("""
 <div class="main-banner">
     <h1>🛡️ Agentic AML Suspicious Activity Intelligence Center</h1>
-    <p>Societe Generale AML Hackathon — Dynamic Multi-Agent Planning & Explainable Suspicious Activity Detection</p>
+    <p>Global AML Hackathon — Dynamic Multi-Agent Planning & Explainable Suspicious Activity Detection</p>
 </div>
 """, unsafe_allow_html=True)
 

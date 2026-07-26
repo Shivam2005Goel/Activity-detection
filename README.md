@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://img.shields.io/badge/🏆_Societe_Generale-AML_Hackathon_Winner-FFD700?style=for-the-badge&logo=trophy" alt="Hackathon Winner" />
+  <img src="https://img.shields.io/badge/🏆_Global-AML_Hackathon_Winner-FFD700?style=for-the-badge&logo=trophy" alt="Hackathon Winner" />
   <h1>🛡️ Agentic AML</h1>
   <h3>The Next-Generation Agentic AI Suspicious Activity Detection System</h3>
 
@@ -244,5 +244,5 @@ python scripts/backtest_ibm_dataset.py
 
 <div align="center">
   <br/>
-  <b>Built with ❤️ for the Societe Generale AML Hackathon</b>
+  <b>Built with ❤️ for the Global AML Hackathon</b>
 </div>
