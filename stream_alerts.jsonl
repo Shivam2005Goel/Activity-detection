@@ -949,3 +949,76 @@
 {"timestamp": "2026-07-26T14:05:34.717474Z", "customer_id": "CUST0064", "event_type": "STREAM_ALERT", "amount": 10561.72, "reason": "Sudden volume spike detected in stream"}
 {"timestamp": "2026-07-26T14:06:30.760191Z", "customer_id": "CUST0020", "event_type": "STREAM_ALERT", "amount": 9794.57, "reason": "High frequency transfer pattern"}
 {"timestamp": "2026-07-26T14:07:00.778296Z", "customer_id": "CUST0067", "event_type": "STREAM_ALERT", "amount": 6279.33, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:07:45.841186Z", "customer_id": "CUST0011", "event_type": "STREAM_ALERT", "amount": 19579.85, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:08:03.895279Z", "customer_id": "CUST0057", "event_type": "STREAM_ALERT", "amount": 14966.23, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:08:43.934285Z", "customer_id": "CUST0011", "event_type": "STREAM_ALERT", "amount": 19953.66, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:08:49.939554Z", "customer_id": "CUST0037", "event_type": "STREAM_ALERT", "amount": 8779.86, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:08:51.942252Z", "customer_id": "CUST0022", "event_type": "STREAM_ALERT", "amount": 18822.85, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:09:14.961781Z", "customer_id": "CUST0060", "event_type": "STREAM_ALERT", "amount": 9208.78, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:09:28.972668Z", "customer_id": "CUST0030", "event_type": "STREAM_ALERT", "amount": 17846.55, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:09:36.978759Z", "customer_id": "CUST0072", "event_type": "STREAM_ALERT", "amount": 16825.92, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:10:15.011909Z", "customer_id": "CUST0010", "event_type": "STREAM_ALERT", "amount": 13625.27, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:10:27.021723Z", "customer_id": "CUST0009", "event_type": "STREAM_ALERT", "amount": 468.88, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:10:57.041705Z", "customer_id": "CUST0058", "event_type": "STREAM_ALERT", "amount": 19131.56, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:11:43.082598Z", "customer_id": "CUST0042", "event_type": "STREAM_ALERT", "amount": 19576.66, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:12:09.104103Z", "customer_id": "CUST0060", "event_type": "STREAM_ALERT", "amount": 1081.73, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:12:40.120189Z", "customer_id": "CUST0003", "event_type": "STREAM_ALERT", "amount": 2854.61, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:12:50.130530Z", "customer_id": "CUST0079", "event_type": "STREAM_ALERT", "amount": 7041.19, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:13:45.162466Z", "customer_id": "CUST0007", "event_type": "STREAM_ALERT", "amount": 2277.05, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:13:59.173549Z", "customer_id": "CUST0093", "event_type": "STREAM_ALERT", "amount": 5779.39, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:14:15.205468Z", "customer_id": "CUST0065", "event_type": "STREAM_ALERT", "amount": 8240.26, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:14:17.208474Z", "customer_id": "CUST0054", "event_type": "STREAM_ALERT", "amount": 17456.28, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:14:19.209994Z", "customer_id": "CUST0067", "event_type": "STREAM_ALERT", "amount": 3815.87, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:14:49.227104Z", "customer_id": "CUST0029", "event_type": "STREAM_ALERT", "amount": 14028.01, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:14:50.229464Z", "customer_id": "CUST0061", "event_type": "STREAM_ALERT", "amount": 13455.27, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:14:53.232587Z", "customer_id": "CUST0093", "event_type": "STREAM_ALERT", "amount": 18163.3, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:15:21.277143Z", "customer_id": "CUST0057", "event_type": "STREAM_ALERT", "amount": 18980.56, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:16:29.319335Z", "customer_id": "CUST0009", "event_type": "STREAM_ALERT", "amount": 3385.25, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:16:36.325570Z", "customer_id": "CUST0079", "event_type": "STREAM_ALERT", "amount": 8443.34, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:16:43.332210Z", "customer_id": "CUST0087", "event_type": "STREAM_ALERT", "amount": 3543.76, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:17:38.558240Z", "customer_id": "CUST0007", "event_type": "STREAM_ALERT", "amount": 12008.63, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:18:25.591485Z", "customer_id": "CUST0059", "event_type": "STREAM_ALERT", "amount": 15013.06, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:18:27.594840Z", "customer_id": "CUST0042", "event_type": "STREAM_ALERT", "amount": 8600.52, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:18:48.609137Z", "customer_id": "CUST0040", "event_type": "STREAM_ALERT", "amount": 12141.28, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:18:54.614325Z", "customer_id": "CUST0085", "event_type": "STREAM_ALERT", "amount": 4960.33, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:18:55.615730Z", "customer_id": "CUST0009", "event_type": "STREAM_ALERT", "amount": 12645.16, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:18:56.619828Z", "customer_id": "CUST0012", "event_type": "STREAM_ALERT", "amount": 188.74, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:19:16.672743Z", "customer_id": "CUST0076", "event_type": "STREAM_ALERT", "amount": 9773.22, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:19:27.681192Z", "customer_id": "CUST0040", "event_type": "STREAM_ALERT", "amount": 6749.86, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:19:35.689160Z", "customer_id": "CUST0068", "event_type": "STREAM_ALERT", "amount": 7642.02, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:20:16.749300Z", "customer_id": "CUST0022", "event_type": "STREAM_ALERT", "amount": 16933.48, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:20:17.758467Z", "customer_id": "CUST0054", "event_type": "STREAM_ALERT", "amount": 6109.22, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:20:26.767689Z", "customer_id": "CUST0072", "event_type": "STREAM_ALERT", "amount": 17660.65, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:20:56.797120Z", "customer_id": "CUST0018", "event_type": "STREAM_ALERT", "amount": 15150.31, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:20:58.798670Z", "customer_id": "CUST0042", "event_type": "STREAM_ALERT", "amount": 11741.98, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:21:22.825818Z", "customer_id": "CUST0084", "event_type": "STREAM_ALERT", "amount": 14706.55, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:21:24.828196Z", "customer_id": "CUST0003", "event_type": "STREAM_ALERT", "amount": 15538.82, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:23:00.829261Z", "customer_id": "CUST0023", "event_type": "STREAM_ALERT", "amount": 9055.46, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:23:41.874163Z", "customer_id": "CUST0090", "event_type": "STREAM_ALERT", "amount": 7880.73, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:23:43.877409Z", "customer_id": "CUST0069", "event_type": "STREAM_ALERT", "amount": 6601.8, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:24:01.889883Z", "customer_id": "CUST0007", "event_type": "STREAM_ALERT", "amount": 15132.13, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:24:06.894253Z", "customer_id": "CUST0020", "event_type": "STREAM_ALERT", "amount": 14946.68, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:24:24.908018Z", "customer_id": "CUST0066", "event_type": "STREAM_ALERT", "amount": 13134.76, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:24:35.920962Z", "customer_id": "CUST0014", "event_type": "STREAM_ALERT", "amount": 8331.73, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:24:49.931974Z", "customer_id": "CUST0043", "event_type": "STREAM_ALERT", "amount": 1004.91, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:24:54.936763Z", "customer_id": "CUST0017", "event_type": "STREAM_ALERT", "amount": 3784.62, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:25:10.945436Z", "customer_id": "CUST0091", "event_type": "STREAM_ALERT", "amount": 17098.4, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:25:28.956711Z", "customer_id": "CUST0065", "event_type": "STREAM_ALERT", "amount": 10122.51, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:25:34.959706Z", "customer_id": "CUST0053", "event_type": "STREAM_ALERT", "amount": 9272.42, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:26:19.987992Z", "customer_id": "CUST0020", "event_type": "STREAM_ALERT", "amount": 14264.15, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:26:23.992792Z", "customer_id": "CUST0094", "event_type": "STREAM_ALERT", "amount": 6060.23, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:26:24.994932Z", "customer_id": "CUST0028", "event_type": "STREAM_ALERT", "amount": 910.88, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:26:41.003249Z", "customer_id": "CUST0084", "event_type": "STREAM_ALERT", "amount": 11981.13, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:26:45.007458Z", "customer_id": "CUST0067", "event_type": "STREAM_ALERT", "amount": 15950.03, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:26:47.009799Z", "customer_id": "CUST0089", "event_type": "STREAM_ALERT", "amount": 6118.38, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:26:51.013050Z", "customer_id": "CUST0021", "event_type": "STREAM_ALERT", "amount": 17903.79, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:27:14.025748Z", "customer_id": "CUST0018", "event_type": "STREAM_ALERT", "amount": 2310.8, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:27:20.028997Z", "customer_id": "CUST0019", "event_type": "STREAM_ALERT", "amount": 11115.01, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:27:23.030472Z", "customer_id": "CUST0074", "event_type": "STREAM_ALERT", "amount": 13421.83, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:27:31.034552Z", "customer_id": "CUST0098", "event_type": "STREAM_ALERT", "amount": 4305.88, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:28:16.057742Z", "customer_id": "CUST0049", "event_type": "STREAM_ALERT", "amount": 6332.82, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:28:21.062652Z", "customer_id": "CUST0006", "event_type": "STREAM_ALERT", "amount": 5948.16, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:28:30.069343Z", "customer_id": "CUST0056", "event_type": "STREAM_ALERT", "amount": 15692.4, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:28:47.078547Z", "customer_id": "CUST0062", "event_type": "STREAM_ALERT", "amount": 1396.06, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T14:30:52.176178Z", "customer_id": "CUST0080", "event_type": "STREAM_ALERT", "amount": 19221.61, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T14:30:58.179614Z", "customer_id": "CUST0077", "event_type": "STREAM_ALERT", "amount": 7193.73, "reason": "High frequency transfer pattern"}

@@ -11,7 +11,18 @@ sys.path.insert(0, str(BASE_DIR))
 
 import config
 from agents.orchestrator import run_agent
-from safety.audit_logger import get_recent_audit_logs
+import os
+import httpx
+
+def get_recent_audit_logs(limit=50):
+    api_url = os.getenv("API_URL", "http://localhost:8000")
+    try:
+        response = httpx.get(f"{api_url}/audit-log?limit={limit}", timeout=10.0)
+        if response.status_code == 200:
+            return response.json().get("logs", [])
+    except Exception:
+        pass
+    return []
 import uuid
 import httpx
 
