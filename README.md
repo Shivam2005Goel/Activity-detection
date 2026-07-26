@@ -101,6 +101,22 @@ graph TD
 
 ---
 
+## 📸 Application Showcase
+
+<p align="center">
+  <img src="./img1.PNG" width="48%" />
+  <img src="./img2.PNG" width="48%" />
+  <img src="./img31.PNG" width="48%" />
+  <img src="./img4.PNG" width="48%" />
+  <img src="./img5.PNG" width="48%" />
+  <img src="./img6.PNG" width="48%" />
+  <img src="./img7.PNG" width="48%" />
+  <img src="./img8.PNG" width="48%" />
+  <img src="./img9.PNG" width="96%" />
+</p>
+
+---
+
 ## 📂 Complete Project Structure
 
 ```text
