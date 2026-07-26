@@ -242,6 +242,30 @@ streamlit run dashboard/app.py
 
 ---
 
+## 🐳 Docker Deployment (Recommended)
+
+The easiest and most robust way to run the entire system (both the backend API and the frontend UI) is using Docker Compose.
+
+### 1. Clone & Setup Environment
+```bash
+git clone https://github.com/Shivam2005Goel/Activity-detection.git
+cd Activity-detection
+
+# Create an .env file with your API key
+echo "OPENROUTER_API_KEY=your_openrouter_key" > .env
+```
+
+### 2. Spin Up the Containers
+```bash
+docker-compose up -d --build
+```
+
+That's it! The system will automatically build the environments, generate the mock DuckDB database on startup if it's missing, and link the services together securely. 
+- **Dashboard**: `http://localhost:8501`
+- **API**: `http://localhost:8000`
+
+---
+
 ## 💡 "Show, Don't Tell": Try These Queries!
 
 - **`"Show me a scatter plot of transaction amounts vs time"`**  
