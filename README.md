@@ -78,20 +78,77 @@ graph TD
 
 ---
 
+## 📂 Complete Project Structure
+
+```text
+Activity-detection/
+├── agents/                      # 🧠 Autonomous AI Agents
+│   ├── orchestrator.py          # The Central Nervous System (Dynamic Tool Planner)
+│   ├── planner.py               # (Legacy/Helper) Builds prompt structures for the LLM
+│   ├── query_understanding.py   # Intent Parser (Extracts filters, entities, and actions)
+│   └── synthesizer.py           # Natural Language Generation for the final response
+├── tools/                       # 🛠️ The Execution Tool Suite
+│   ├── aggregation_rule.py      # Statistical volume anomalies (e.g., 10+ txns in 24h)
+│   ├── charts.py                # AI-driven Plotly code generator for dynamic visuals
+│   ├── eda.py                   # Exploratory Data Analysis & summary statistics
+│   ├── explanation.py           # Evidence-backed natural language explanations
+│   └── ml_anomaly.py            # PyOD IsolationForest unsupervised ML models
+├── api/                         # 🌐 FastAPI Backend Services
+│   └── main.py                  # The REST API exposing the /agent/query endpoint
+├── dashboard/                   # 🖥️ Streamlit Frontend
+│   └── app.py                   # Real-time UI, Chat Interface, and Audit Log Viewer
+├── data/                        # 🗄️ Database
+│   └── mock_aml_database.db     # DuckDB database holding the financial transactions
+├── safety/                      # 🛡️ Enterprise Security & Guardrails
+│   ├── audit_logger.py          # Immutable logging to audit_log.jsonl
+│   ├── fallback_handler.py      # Regex & Deterministic failovers for LLM outages
+│   └── verifier.py              # Critic Agent preventing numerical LLM hallucinations
+├── sars/                        # 📄 Suspicious Activity Reports
+│   └── SAR_*.md                 # Auto-generated draft SARs for human review
+├── scripts/                     # ⚙️ Utility Scripts
+│   ├── backtest_ibm_dataset.py  # Kaggle IBM AML supervised ML backtesting
+│   ├── generate_sample_data.py  # Synthesizes the mock banking transactions
+│   └── stream_processor.py      # Daemon simulator for continuous transaction ingest
+├── config.py                    # Environment configuration & Thresholds
+├── schemas.py                   # Pydantic data models enforcing strict types
+└── README.md                    # You are here!
+```
+
+---
+
 ## 🤖 The Agents & Tools Breakdown
 
 ### 🧠 Core Agents (The Brain)
-- **`Query Understanding Agent`**: Converts natural language into a structured schema, determining if the user wants an entity lookup, a broad ML sweep, or a dynamic chart.
-- **`Orchestrator Agent`**: The central nervous system. Decides which tools to run and which to skip.
-- **`Verifier Agent`**: The strict auditor. Mathematically verifies LLM responses against local data arrays. If an LLM hallucinates an amount, this agent blocks it.
+- **`Query Understanding Agent` (`agents/query_understanding.py`)**: 
+  - Converts messy natural language into a strict Pydantic `Intent` schema. 
+  - Identifies exactly what the user wants: an isolated entity lookup (`"Is CUST123 suspicious?"`), a broad ML sweep (`"Find structuring"`), an aggregation query (`"Show top 5"`), or a charting request (`"Plot amounts"`).
+- **`Orchestrator Agent` (`agents/orchestrator.py`)**: 
+  - The central nervous system and dynamic execution planner. 
+  - It decides precisely which tools to run and which to skip based on the intent. If a user asks for a chart, it skips the heavy ML Anomaly models to save compute and time.
+- **`Verifier Agent` (`safety/verifier.py`)**: 
+  - The strict internal auditor (Critic Agent). 
+  - Mathematically cross-verifies the LLM's natural language responses against the local Pandas dataframe. If the LLM hallucinates an amount or transaction count, this agent strips it out and enforces ground-truth facts.
 
 ### 🛠️ Tool Suite (The Hands)
-- **`data_loader` & `feature_engineering`**: Ingests data and calculates rolling velocity windows (e.g., `avg_amount_7d`).
-- **`structuring_rule`**: Deterministically flags behaviors like "smurfing" (multiple rapid deposits just under the $10k IRS reporting threshold).
-- **`graph_layering`**: Uses NetworkX to build directed graphs, detecting cyclical layering chains.
-- **`ml_anomaly`**: Runs unsupervised `IsolationForest` (PyOD) to catch statistically bizarre multivariate patterns that humans can't see.
-- **`consensus`**: A weighted voting engine combining strict rules with ML intuition.
-- **`charts`**: A sandboxed agent that dynamically writes and executes Plotly Python code on the fly to render bespoke visualizations.
+- **`data_loader` & `feature_engineering`**: 
+  - Connects to DuckDB to ingest data dynamically filtered by the Query Agent's timebounds.
+  - Calculates complex temporal rolling velocity windows (e.g., `avg_amount_7d`, `daily_txn_count`) necessary for catching layered structuring.
+- **`structuring_rule`**: 
+  - A deterministic heuristics engine. 
+  - Flags behaviors like "smurfing"—where a criminal makes multiple rapid deposits just under the $10,000 IRS reporting threshold to avoid raising alarms.
+- **`aggregation_rule` (`tools/aggregation_rule.py`)**: 
+  - Flags massive volume anomalies (e.g., customers conducting 50+ rapid-fire retail transactions in a single day).
+- **`graph_layering`**: 
+  - Uses `NetworkX` to construct directed transactional graphs. 
+  - Follows the money through multiple hops to detect cyclical layering chains (e.g., Account A -> B -> C -> A).
+- **`ml_anomaly` (`tools/ml_anomaly.py`)**: 
+  - Runs a totally unsupervised `IsolationForest` (via PyOD library).
+  - Designed to catch statistically bizarre multivariate patterns that humans and hard-coded rules cannot see.
+- **`consensus`**: 
+  - A weighted voting engine combining strict rules with ML intuition. Outputs a unified Risk Score (0-100) and an agreement verdict (e.g., `Full agreement`, `Disagreement`).
+- **`charts` (`tools/charts.py`)**: 
+  - An entirely autonomous, sandboxed sub-agent. 
+  - It receives the user's charting request and the dataset schema, then dynamically writes and safely executes Python `Plotly` code on the fly to render bespoke, interactive visuals in the UI.
 
 ---
 
