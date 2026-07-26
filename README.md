@@ -112,7 +112,8 @@ graph TD
   <img src="assets/img6.PNG" width="48%" />
   <img src="assets/img7.PNG" width="48%" />
   <img src="assets/img8.PNG" width="48%" />
-  <img src="assets/img9.PNG" width="96%" />
+  <img src="assets/img9.PNG" width="48%" />
+  <img src="assets/img10.PNG" width="48%" />
 </p>
 
 ---
