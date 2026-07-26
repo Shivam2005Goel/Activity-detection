@@ -341,8 +341,9 @@ with tab1:
             try:
                 import httpx
                 from schemas import AgentResponse
+                api_url = os.getenv("API_URL", "http://localhost:8000")
                 api_res = httpx.post(
-                    "http://localhost:8000/agent/query", 
+                    f"{api_url}/agent/query", 
                     json={"query": user_query, "session_id": st.session_state.session_id}, 
                     timeout=60.0
                 )
@@ -502,7 +503,8 @@ with tab1:
                         with f_col1:
                             if st.button("👍 Confirm Suspicion", key=f"tp_{item.customer_id}"):
                                 try:
-                                    httpx.post("http://localhost:8000/agent/feedback", json={
+                                    api_url = os.getenv("API_URL", "http://localhost:8000")
+                                    httpx.post(f"{api_url}/agent/feedback", json={
                                         "customer_id": item.customer_id,
                                         "feedback": "True Positive",
                                         "session_id": st.session_state.session_id
@@ -513,7 +515,8 @@ with tab1:
                         with f_col2:
                             if st.button("👎 Mark False Positive", key=f"fp_{item.customer_id}"):
                                 try:
-                                    httpx.post("http://localhost:8000/agent/feedback", json={
+                                    api_url = os.getenv("API_URL", "http://localhost:8000")
+                                    httpx.post(f"{api_url}/agent/feedback", json={
                                         "customer_id": item.customer_id,
                                         "feedback": "False Positive",
                                         "session_id": st.session_state.session_id
