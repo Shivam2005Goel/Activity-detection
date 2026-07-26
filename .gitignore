@@ -29,3 +29,7 @@ Desktop.ini
 .idea/
 *.swp
 *.swo
+
+# Documentation & Temp Files
+*.docx
+~$*.docx
