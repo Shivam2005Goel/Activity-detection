@@ -15,7 +15,10 @@
 
 <br/>
 
-> 🚨 **The Impact**: Traditional Anti-Money Laundering (AML) systems suffer from rigid rule-based constraints, resulting in up to **95% false-positive rates** and severe alert fatigue. **Agentic AML** solves this by dynamically routing investigations through a Multi-Agent system—combining the determinism of hard rules with the adaptability of Unsupervised ML, cutting investigation times from days to seconds while maintaining **100% regulatory explainability**.
+## 🎯 Problem Statement
+Traditional Anti-Money Laundering (AML) systems suffer from rigid rule-based constraints, resulting in up to **95% false-positive rates** and severe alert fatigue for compliance investigators. The manual effort required to sift through thousands of false alarms drains resources, delays critical investigations, and leaves institutions vulnerable to sophisticated, multi-hop laundering typologies (like layering and smurfing) that easily evade basic heuristics.
+
+> 🚨 **Our Solution**: **Agentic AML** solves this by dynamically routing investigations through a Multi-Agent system—combining the determinism of hard rules with the adaptability of Unsupervised ML, cutting investigation times from days to seconds while maintaining **100% regulatory explainability**.
 
 ---
 
@@ -25,6 +28,26 @@
 2. **Zero-Hallucination Guarantee (The Critic Agent)**: LLMs are prone to hallucinating financial figures. Our internal **Verifier Agent** mathematically cross-checks every LLM output against the local database before showing it to the user.
 3. **Enterprise-Grade Security (Zero Data Exfiltration)**: Raw PII and transaction amounts are **never** sent to the LLM. The AI only receives metadata schemas to write queries and charting logic safely.
 4. **Seamless Offline Failovers**: If the cloud LLM goes down, the system instantly hot-swaps to an offline regex-parser and template generator, ensuring **100% uptime for mission-critical compliance teams**.
+
+---
+
+## 📊 Dataset & Data Sources
+This project is built and benchmarked using the **IBM AML (Anti-Money Laundering) Dataset** (synthetic banking transaction data hosted on Kaggle). 
+- **Type**: Synthetic tabular transaction records.
+- **Features**: Includes Sender IDs, Receiver IDs, Timestamps, Amounts, Currencies, and categorical transaction types.
+- **Mock Data Generator**: To ensure the application runs smoothly out-of-the-box, the repo includes a robust synthetic data generator (`scripts/generate_sample_data.py`). It simulates high-velocity transaction streams, structuring patterns, and graph-based laundering typologies matching the IBM schema.
+
+---
+
+## 💻 Tech Stack
+- **Backend Application**: FastAPI (Python 3.11+)
+- **Frontend Dashboard**: Streamlit
+- **Database Engine**: DuckDB (In-process analytical SQL engine)
+- **Machine Learning**: PyOD (IsolationForest for unsupervised anomaly detection), Scikit-Learn
+- **Graph Analytics**: NetworkX (for detecting multi-hop cyclic layering)
+- **Data Visualization**: Plotly (Dynamically generated via autonomous charting agents)
+- **Containerization**: Docker & Docker Compose
+- **LLM Routing**: OpenRouter (For Intent parsing and explanation generation)
 
 ---
 
@@ -241,6 +264,16 @@ We also support offline benchmarking using the IBM AML Kaggle dataset (download 
 ```bash
 python scripts/backtest_ibm_dataset.py
 ```
+
+---
+
+## 📚 References & Documentation
+- **IBM AML Dataset (Kaggle)**: [Synthetic Financial Datasets For Fraud Detection](https://www.kaggle.com/) (Reference for backtesting suite)
+- **FastAPI Documentation**: [https://fastapi.tiangolo.com/](https://fastapi.tiangolo.com/)
+- **Streamlit Documentation**: [https://docs.streamlit.io/](https://docs.streamlit.io/)
+- **DuckDB Documentation**: [https://duckdb.org/docs/](https://duckdb.org/docs/)
+- **PyOD (Python Outlier Detection)**: [https://pyod.readthedocs.io/](https://pyod.readthedocs.io/)
+- **NetworkX**: [https://networkx.org/](https://networkx.org/)
 
 <div align="center">
   <br/>
