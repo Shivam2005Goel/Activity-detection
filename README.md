@@ -25,6 +25,40 @@ An intelligent orchestrator interprets the intent, dynamically plans the sequenc
 
 ## 🏗️ Architecture Overview
 
+```mermaid
+graph TD
+    User([User / Investigator]) -->|Natural Language Query| UI[Streamlit Dashboard]
+    UI -->|POST /agent/query| API[FastAPI Backend]
+    
+    subgraph Agentic Orchestrator
+        API --> QU[Query Understanding Agent]
+        QU -->|Extracts Intent & Filters| Planner[Dynamic Orchestrator]
+        Planner -->|Builds Execution Graph| Tools{Tool Dispatcher}
+    end
+    
+    subgraph Data & Analytics Tools
+        Tools --> DL[(Data Loader)]
+        DL --> FE[Feature Engineering]
+        FE --> EDA[Dynamic Charting]
+        
+        FE --> ML[PyOD Anomaly Detection]
+        FE --> SR[Structuring Rules]
+        FE --> GL[NetworkX Graph Layering]
+        
+        ML --> CE{Consensus Engine}
+        SR --> CE
+        GL --> CE
+        
+        CE --> RC[Risk Classifier]
+        RC --> EX[Explainability Agent]
+        EX --> Esc[Escalation Recommender]
+    end
+    
+    Esc --> Verifier[Verifier / Critic Agent]
+    Verifier -->|Validates Facts| API
+    API -->|Returns Verified JSON| UI
+```
+
 Our architecture follows a strictly planned Agentic Execution flow decoupled into several micro-services and agents:
 
 1. **Frontend (Streamlit)**: A modern, real-time dashboard displaying execution paths, generated charts, extracted data grids, and live audit logs.

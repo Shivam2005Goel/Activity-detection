@@ -668,3 +668,13 @@
 {"timestamp": "2026-07-26T10:01:38.302067Z", "customer_id": "CUST0059", "event_type": "STREAM_ALERT", "amount": 5193.52, "reason": "High frequency transfer pattern"}
 {"timestamp": "2026-07-26T10:02:09.317842Z", "customer_id": "CUST0025", "event_type": "STREAM_ALERT", "amount": 11056.7, "reason": "Sudden volume spike detected in stream"}
 {"timestamp": "2026-07-26T10:02:14.320736Z", "customer_id": "CUST0035", "event_type": "STREAM_ALERT", "amount": 14137.0, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T10:03:41.375082Z", "customer_id": "CUST0061", "event_type": "STREAM_ALERT", "amount": 13209.06, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T10:03:46.379180Z", "customer_id": "CUST0067", "event_type": "STREAM_ALERT", "amount": 16588.98, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T10:04:11.409970Z", "customer_id": "CUST0030", "event_type": "STREAM_ALERT", "amount": 6465.5, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T10:04:13.411919Z", "customer_id": "CUST0045", "event_type": "STREAM_ALERT", "amount": 8478.34, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T10:04:25.421781Z", "customer_id": "CUST0012", "event_type": "STREAM_ALERT", "amount": 17548.09, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T10:04:28.423763Z", "customer_id": "CUST0096", "event_type": "STREAM_ALERT", "amount": 3311.22, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T10:04:33.427176Z", "customer_id": "CUST0038", "event_type": "STREAM_ALERT", "amount": 14925.68, "reason": "Sudden volume spike detected in stream"}
+{"timestamp": "2026-07-26T10:04:43.432863Z", "customer_id": "CUST0056", "event_type": "STREAM_ALERT", "amount": 2919.77, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T10:04:52.437053Z", "customer_id": "CUST0031", "event_type": "STREAM_ALERT", "amount": 2214.66, "reason": "High frequency transfer pattern"}
+{"timestamp": "2026-07-26T10:05:25.453944Z", "customer_id": "CUST0052", "event_type": "STREAM_ALERT", "amount": 8636.07, "reason": "High frequency transfer pattern"}
